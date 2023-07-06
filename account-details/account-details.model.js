@@ -1,0 +1,71 @@
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AccountDetails = void 0;
+const sequelize_typescript_1 = require("sequelize-typescript");
+let AccountDetails = class AccountDetails extends sequelize_typescript_1.Model {
+};
+__decorate([
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.STRING,
+        allowNull: false, unique: true
+    }),
+    __metadata("design:type", String)
+], AccountDetails.prototype, "uuid", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.STRING,
+        allowNull: false,
+    }),
+    __metadata("design:type", String)
+], AccountDetails.prototype, "account_uuid", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.STRING,
+        allowNull: false,
+    }),
+    __metadata("design:type", String)
+], AccountDetails.prototype, "mode", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.STRING,
+        allowNull: true,
+        defaultValue: 'Active'
+    }),
+    __metadata("design:type", String)
+], AccountDetails.prototype, "status", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.FLOAT,
+        allowNull: true,
+        defaultValue: 0
+    }),
+    __metadata("design:type", String)
+], AccountDetails.prototype, "sold", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.TEXT,
+        allowNull: false,
+    }),
+    __metadata("design:type", String)
+], AccountDetails.prototype, "key", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.TEXT,
+        allowNull: false,
+    }),
+    __metadata("design:type", String)
+], AccountDetails.prototype, "storeKey", void 0);
+AccountDetails = __decorate([
+    sequelize_typescript_1.Table
+], AccountDetails);
+exports.AccountDetails = AccountDetails;
+//# sourceMappingURL=account-details.model.js.map
