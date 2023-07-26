@@ -34,6 +34,10 @@ export declare class TransactionsService {
         refunded: string;
         shipping: string;
         made_by: string;
+        data_model: string;
+        confirmation_url: string;
+        confirmation_method: string;
+        merchant_key: string;
         id?: any;
         createdAt?: any;
         updatedAt?: any;
@@ -52,6 +56,11 @@ export declare class TransactionsService {
         details: import("../transaction-details/transaction-details.model").TransactionDetails;
         message: string;
     }>;
+    externalSystemPayment(data: any, key: string): Promise<{
+        transaction: Transactions;
+        message: string;
+    }>;
+    ValidateExternalPayment(data: any): Promise<Transactions>;
     cancel(uuid: any): Promise<{
         details: import("../transaction-details/transaction-details.model").TransactionDetails;
         message: string;
@@ -65,5 +74,6 @@ export declare class TransactionsService {
     processExternalMerchantPayment(url: string, data: string, method: string): Promise<{
         status: any;
         data: any;
+        message: any;
     }>;
 }

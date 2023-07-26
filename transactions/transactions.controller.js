@@ -26,7 +26,13 @@ let TransactionsController = class TransactionsController {
         return { data: await this.transactionService.findOne(params.value) };
     }
     async create(data) {
-        return this.transactionService.create(data);
+        return await this.transactionService.create(data);
+    }
+    async merchantPayment(data, headers) {
+        return await this.transactionService.externalSystemPayment(data, headers.api_key);
+    }
+    async validateMerchantPayment(data) {
+        return await this.transactionService.ValidateExternalPayment(data);
     }
     async cancel(params) {
         return this.transactionService.cancel(params.uuid);
@@ -60,6 +66,23 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], TransactionsController.prototype, "create", null);
+__decorate([
+    (0, common_1.Post)('/merchant/initiate-payment'),
+    (0, common_1.HttpCode)(200),
+    __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Headers)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], TransactionsController.prototype, "merchantPayment", null);
+__decorate([
+    (0, common_1.Post)('/merchant/payment-confirmation'),
+    (0, common_1.HttpCode)(200),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], TransactionsController.prototype, "validateMerchantPayment", null);
 __decorate([
     (0, common_1.Put)('/cancel/:uuid'),
     (0, common_1.HttpCode)(200),

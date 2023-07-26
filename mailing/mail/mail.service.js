@@ -79,6 +79,20 @@ let MailService = class MailService {
             console.log(`sending mail failed due to ${error.toString()}`);
         }
     }
+    async sendInitiatePaymentMail(sender, receiver, data, paymentCode) {
+        try {
+            await this.mailerService.sendMail({
+                to: receiver.email,
+                from: "DailyPay sarl <providencekambale@nalediservices.com>",
+                subject: "Payment",
+                template: '../../templates/initiate_payment',
+                context: { sender: sender, receiver: receiver, data: data, paymentCode: paymentCode },
+            });
+        }
+        catch (error) {
+            console.log(`sending mail failed due to ${error.toString()}`);
+        }
+    }
     async getUserData(uuid) {
         if (!uuid) {
             return null;

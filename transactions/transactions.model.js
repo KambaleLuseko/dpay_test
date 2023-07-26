@@ -116,6 +116,34 @@ __decorate([
     }),
     __metadata("design:type", String)
 ], Transactions.prototype, "made_by", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.TEXT,
+        allowNull: true,
+    }),
+    __metadata("design:type", String)
+], Transactions.prototype, "data_model", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.TEXT,
+        allowNull: true,
+    }),
+    __metadata("design:type", String)
+], Transactions.prototype, "confirmation_url", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.TEXT,
+        allowNull: true,
+    }),
+    __metadata("design:type", String)
+], Transactions.prototype, "confirmation_method", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.STRING,
+        allowNull: true,
+    }),
+    __metadata("design:type", String)
+], Transactions.prototype, "merchant_key", void 0);
 Transactions = __decorate([
     sequelize_typescript_1.Table
 ], Transactions);

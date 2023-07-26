@@ -11,6 +11,9 @@ class UuidGenerator {
     static getDisplayDate() {
         return `${new Date().getDate().toString().padStart(2, '0')}/${(new Date().getMonth() + 1).toString().padStart(2, '0')}/${new Date().getFullYear()} ${new Date().getHours().toString().padStart(2, '0')}:${new Date().getMinutes().toString().padStart(2, '0')}:${new Date().getSeconds().toString().padStart(2, '0')}:${new Date().getMilliseconds()}`;
     }
+    static hexCode() {
+        return Math.floor(100000000000 + Math.random() * 900000000000).toString(16).toUpperCase();
+    }
 }
 exports.UuidGenerator = UuidGenerator;
 //# sourceMappingURL=uuidGenerator.helper.js.map

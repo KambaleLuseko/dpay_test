@@ -31,16 +31,14 @@ let TransactionDetailsService = class TransactionDetailsService {
     async create(data) {
         if (!data.amount || !data.transaction_uuid) {
             throw new common_1.HttpException('Invalid data submitted', common_1.HttpStatus.BAD_REQUEST);
-            return;
         }
         if (data.amount == 0) {
             throw new common_1.HttpException('The amount cannot be equal to zero', common_1.HttpStatus.FORBIDDEN);
-            return;
         }
         if (!data.uuid) {
             data.uuid = uuidGenerator_helper_1.UuidGenerator.uuidGenerator();
         }
-        return this.transactionDetails.create(data);
+        return await this.transactionDetails.create(data);
     }
 };
 TransactionDetailsService = __decorate([

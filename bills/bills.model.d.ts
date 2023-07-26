@@ -22,4 +22,5 @@ export declare class Bills extends Model<Bills> {
     data_model: string;
     confirmation_url: string;
     confirmation_method: string;
+    merchant_key: string;
 }

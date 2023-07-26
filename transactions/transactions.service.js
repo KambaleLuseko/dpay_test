@@ -63,7 +63,7 @@ let TransactionsService = class TransactionsService {
         let senderData = await this.userService.findAll(data.sender_uuid);
         let receiverData = await this.userService.findAll((_a = data.receiver_uuid) !== null && _a !== void 0 ? _a : 'unknown');
         let transactDetails = await this.transactionDetailsService.findAll(data.uuid);
-        let response = Object.assign(Object.assign({}, data), { sender: (_b = senderData[0]) !== null && _b !== void 0 ? _b : {}, receiver: receiverData[0], payment_method: paymentMetods[0], details: transactDetails });
+        let response = Object.assign(Object.assign({}, data), { sender: (_b = senderData[0]) !== null && _b !== void 0 ? _b : {}, receiver: receiverData[0], payment_method: paymentMetods ? paymentMetods[0] : null, details: transactDetails });
         return response;
     }
     async findBillPayment(value) {
@@ -79,7 +79,7 @@ let TransactionsService = class TransactionsService {
         for (let index = 0; index < data.length; index++) {
             let paymentMetods = await this.paymentMethodService.findAll(data[0].payment_method_uuid);
             let transactDetails = await this.transactionDetailsService.findAll(data[0].uuid);
-            let response = Object.assign(Object.assign({}, data[index]), { payment_method: paymentMetods[0], details: transactDetails });
+            let response = Object.assign(Object.assign({}, data[index]), { payment_method: paymentMetods ? paymentMetods[0] : null, details: transactDetails });
             result.push(response);
         }
         return result;
@@ -170,12 +170,99 @@ let TransactionsService = class TransactionsService {
         let sender = await this.mailService.getUserData(data.sender_uuid);
         let receiver = await this.mailService.getUserData(data.receiver_uuid);
         if (receiver.email && sender.email) {
-            console.log('sender and receiver found');
-            console.log(sender.email);
-            console.log(receiver.email);
             this.mailService.sendPaymentMail(sender, receiver, data, uuidGenerator_helper_1.UuidGenerator.getDisplayDate());
         }
         return { transaction: transactResponse, details: transactDetailsResponse, message: "Data saved successfuly" };
+    }
+    async externalSystemPayment(data, key) {
+        var _a;
+        if (!data.merchant_id || !data.amount || !data.currency) {
+            throw new common_1.HttpException('Invalid data submitted', common_1.HttpStatus.FORBIDDEN);
+        }
+        if (data.amount == 0) {
+            throw new common_1.HttpException('The amount cannot be equal to zero', common_1.HttpStatus.FORBIDDEN);
+        }
+        if (!data.confirmation_data || !data.confirmation_method || !data.confirmation_url) {
+            throw new common_1.HttpException('The transaction cannot be initiated without confirmation data and URL for merchant payment confirmation', common_1.HttpStatus.FORBIDDEN);
+        }
+        if (!data.notificationMethod || !data.notificationValue) {
+            throw new common_1.HttpException("DailyPay cannot process the payment without notification informations on which we'll send the payment code", common_1.HttpStatus.FORBIDDEN);
+        }
+        let uuid = uuidGenerator_helper_1.UuidGenerator.uuidGenerator();
+        data.uuid = uuid;
+        let paymentCode = uuidGenerator_helper_1.UuidGenerator.hexCode();
+        let transData = {
+            uuid: uuid,
+            type: "Paiement",
+            sender_uuid: paymentCode,
+            receiver_uuid: data.merchant_id,
+            amount: data.amount,
+            currency: data.currency,
+            description: (_a = data.description) !== null && _a !== void 0 ? _a : 'Paiement',
+            payment_method_uuid: "Unknown",
+            wallet: "Main",
+            status: 'Pending',
+            made_by: 'Client',
+            data_model: (`${JSON.stringify(data.confirmation_data)}`),
+            confirmation_url: data.confirmation_url,
+            confirmation_method: data.confirmation_method,
+            merchant_key: key,
+        };
+        let transactResponse = await this.transactionModel.create(transData);
+        let receiver = { name: data.notificationValue, countryCode: "00243", phone: "000 000 000", email: data.notificationValue };
+        let sender = await this.mailService.getUserData(data.merchant_id);
+        if (data.notificationMethod.toString().toLowerCase() == 'email') {
+            if (receiver.email && sender.email) {
+                this.mailService.sendInitiatePaymentMail(sender, receiver, data, paymentCode);
+            }
+        }
+        return { transaction: transactResponse, message: "Data saved successfuly" };
+    }
+    async ValidateExternalPayment(data) {
+        if (!data.amount || !data.currency || !data.payment_method_uuid) {
+            throw new common_1.HttpException('Invalid data submitted', common_1.HttpStatus.FORBIDDEN);
+        }
+        if (data.amount == 0) {
+            throw new common_1.HttpException('The amount cannot be equal to zero', common_1.HttpStatus.FORBIDDEN);
+        }
+        if (!data.paymentCode) {
+            throw new common_1.HttpException("We can't identify the requested resource, please send the identifier", common_1.HttpStatus.BAD_REQUEST);
+        }
+        let paymentData = await this.transactionModel.findOne({ where: { sender_uuid: data.paymentCode } });
+        if (!paymentData) {
+            throw new common_1.HttpException("Invalid identifier submitted", common_1.HttpStatus.NOT_FOUND);
+        }
+        if (parseFloat(paymentData.amount.toString()) > parseFloat(data.amount.toString())) {
+            throw new common_1.HttpException("The amount is not valid as sent by the merchant", common_1.HttpStatus.FORBIDDEN);
+        }
+        if (data.currency != paymentData.currency) {
+            throw new common_1.HttpException("The currency must match the value sent by the merchant", common_1.HttpStatus.FORBIDDEN);
+        }
+        if (!paymentData.data_model || !paymentData.confirmation_method || !paymentData.confirmation_url) {
+            throw new common_1.HttpException("We haven't found merchant confirmation data on this transaction for validation", common_1.HttpStatus.NOT_FOUND);
+        }
+        let externalApiResponse = await this.processExternalMerchantPayment(paymentData.confirmation_url, paymentData.data_model, paymentData.confirmation_method);
+        if (externalApiResponse.status != 200) {
+            throw new common_1.HttpException('The merchant system cannot process the request', common_1.HttpStatus.FORBIDDEN);
+        }
+        const detailsData = {
+            transaction_uuid: paymentData.uuid,
+            amount: paymentData.amount,
+            uuid: uuidGenerator_helper_1.UuidGenerator.uuidGenerator(),
+            total_fees_percent: 0,
+            dp_fees: 0,
+            provider_fees: 0,
+            type: 'Validation',
+        };
+        await this.transactionDetailsService.create(detailsData);
+        await this.transactionModel.update({ status: "Validated" }, { where: { sender_uuid: data.paymentCode, payment_method_uuid: data.payment_method_uuid } });
+        paymentData.status = "Validated";
+        let sender = { name: "Client", countryCode: "00243", phone: "000 000 000", email: "client@dailypaysarl.com" };
+        let receiver = await this.mailService.getUserData(paymentData.receiver_uuid);
+        if (receiver.email && sender.email) {
+            this.mailService.sendPaymentMail(sender, receiver, paymentData, uuidGenerator_helper_1.UuidGenerator.getDisplayDate());
+        }
+        return paymentData;
     }
     async cancel(uuid) {
         let transData = await this.transactionModel.findAll({ where: { uuid: uuid }, raw: true });
@@ -245,11 +332,11 @@ let TransactionsService = class TransactionsService {
                 url: url,
                 data: JSON.stringify(dataModel),
             });
-            return { status: res.status, data: res.data };
+            return { status: res.status, data: res.data, message: "Success" };
         }
         catch (error) {
             console.log((_b = error.message) !== null && _b !== void 0 ? _b : error.toString());
-            return { status: 403, data: {} };
+            return { status: 403, data: {}, message: "Error occured while processing the request" };
         }
     }
 };

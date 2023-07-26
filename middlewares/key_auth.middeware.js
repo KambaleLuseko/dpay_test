@@ -34,7 +34,7 @@ let AuthKeyMiddleware = class AuthKeyMiddleware {
         }
         const userData = await this.userService.findAll(account[0].client_uuid, 'false');
         if (!userData) {
-            throw new common_1.HttpException('Unable to find a developer account with the provided key', common_1.HttpStatus.UNAUTHORIZED);
+            throw new common_1.HttpException('Unable to find a user with the provided key', common_1.HttpStatus.UNAUTHORIZED);
         }
         next();
     }

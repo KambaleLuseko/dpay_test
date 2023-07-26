@@ -10,5 +10,6 @@ export declare class MailService {
     sendWelcomeMail(data: any): Promise<void>;
     sendInvocieMail(sender: any, receiver: any, data: any, createdAt: any): Promise<void>;
     sendPaymentMail(sender: any, receiver: any, data: any, createdAt: any): Promise<void>;
+    sendInitiatePaymentMail(sender: any, receiver: any, data: any, paymentCode: any): Promise<void>;
     getUserData(uuid: string): Promise<any>;
 }

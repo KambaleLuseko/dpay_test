@@ -14,4 +14,8 @@ export declare class Transactions extends Model<Transactions> {
     refunded: string;
     shipping: string;
     made_by: string;
+    data_model: string;
+    confirmation_url: string;
+    confirmation_method: string;
+    merchant_key: string;
 }

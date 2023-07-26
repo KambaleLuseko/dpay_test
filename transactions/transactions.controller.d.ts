@@ -1,4 +1,3 @@
-import { Transactions } from './transactions.model';
 import { TransactionsService } from './transactions.service';
 export declare class TransactionsController {
     private transactionService;
@@ -26,24 +25,33 @@ export declare class TransactionsController {
             refunded: string;
             shipping: string;
             made_by: string;
+            data_model: string;
+            confirmation_url: string;
+            confirmation_method: string;
+            merchant_key: string;
             id?: any;
             createdAt?: any;
             updatedAt?: any;
             deletedAt?: any;
             version?: any;
-            _attributes: Transactions;
-            dataValues: Transactions;
-            _creationAttributes: Transactions;
+            _attributes: import("./transactions.model").Transactions;
+            dataValues: import("./transactions.model").Transactions;
+            _creationAttributes: import("./transactions.model").Transactions;
             isNewRecord: boolean;
             sequelize: import("sequelize").Sequelize;
-            _model: import("sequelize").Model<Transactions, Transactions>;
+            _model: import("sequelize").Model<import("./transactions.model").Transactions, import("./transactions.model").Transactions>;
         };
     }>;
     create(data: any): Promise<{
-        transaction: Transactions;
+        transaction: import("./transactions.model").Transactions;
         details: import("../transaction-details/transaction-details.model").TransactionDetails;
         message: string;
     }>;
+    merchantPayment(data: any, headers: any): Promise<{
+        transaction: import("./transactions.model").Transactions;
+        message: string;
+    }>;
+    validateMerchantPayment(data: any): Promise<import("./transactions.model").Transactions>;
     cancel(params: any): Promise<{
         details: import("../transaction-details/transaction-details.model").TransactionDetails;
         message: string;

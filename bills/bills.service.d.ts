@@ -48,6 +48,7 @@ export declare class BillsService {
         data_model: string;
         confirmation_url: string;
         confirmation_method: string;
+        merchant_key: string;
         id?: any;
         createdAt?: any;
         updatedAt?: any;
