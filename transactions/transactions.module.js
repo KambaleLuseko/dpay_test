@@ -24,7 +24,7 @@ const account_module_1 = require("../account/account.module");
 const account_details_module_1 = require("../account-details/account-details.module");
 let TransactionsModule = class TransactionsModule {
     configure(consumer) {
-        consumer.apply(key_auth_middeware_1.AuthKeyMiddleware).forRoutes({ path: 'transactions/merchant/payment', method: common_1.RequestMethod.POST });
+        consumer.apply(key_auth_middeware_1.AuthKeyMiddleware).forRoutes({ path: 'transactions/merchant/initiate-payment', method: common_1.RequestMethod.POST });
     }
 };
 TransactionsModule = __decorate([
