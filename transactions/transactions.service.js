@@ -225,7 +225,7 @@ let TransactionsService = class TransactionsService {
         if (data.amount == 0) {
             throw new common_1.HttpException('The amount cannot be equal to zero', common_1.HttpStatus.FORBIDDEN);
         }
-        if (!data.paymentCode) {
+        if (!data.paymentCode && !data.sender_uuid) {
             throw new common_1.HttpException("We can't identify the requested resource, please send the identifier", common_1.HttpStatus.BAD_REQUEST);
         }
         let paymentData = await this.transactionModel.findOne({ where: { sender_uuid: data.paymentCode } });
