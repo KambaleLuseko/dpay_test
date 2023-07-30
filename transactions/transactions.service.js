@@ -203,7 +203,7 @@ let TransactionsService = class TransactionsService {
             wallet: "Main",
             status: 'Pending',
             made_by: 'Client',
-            data_model: (`${JSON.stringify(data.confirmation_data)}`),
+            data_model: JSON.stringify(data.confirmation_data),
             confirmation_url: data.confirmation_url,
             confirmation_method: data.confirmation_method,
             merchant_key: key,
@@ -257,7 +257,7 @@ let TransactionsService = class TransactionsService {
             type: 'Validation',
         };
         let detailsResponse = await this.transactionDetailsService.create(detailsData);
-        await this.transactionModel.update({ status: "Refund", payment_method_uuid: data.payment_method_uuid }, { where: { sender_uuid: (_b = data.paymentCode) !== null && _b !== void 0 ? _b : data.sender_uuid, } });
+        await this.transactionModel.update({ status: "Validated", payment_method_uuid: data.payment_method_uuid }, { where: { sender_uuid: (_b = data.paymentCode) !== null && _b !== void 0 ? _b : data.sender_uuid, } });
         paymentData.status = "Validated";
         let sender = { name: "Client", countryCode: "00243", phone: "000 000 000", email: "client@dailypaysarl.com" };
         let receiver = await this.mailService.getUserData(paymentData.receiver_uuid);
