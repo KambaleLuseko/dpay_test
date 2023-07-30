@@ -219,6 +219,7 @@ let TransactionsService = class TransactionsService {
         return { transaction: transactResponse, message: "Data saved successfuly" };
     }
     async ValidateExternalPayment(data) {
+        var _a;
         if (!data.amount || !data.currency || !data.payment_method_uuid) {
             throw new common_1.HttpException('Invalid data submitted', common_1.HttpStatus.FORBIDDEN);
         }
@@ -254,15 +255,15 @@ let TransactionsService = class TransactionsService {
             provider_fees: 0,
             type: 'Validation',
         };
-        await this.transactionDetailsService.create(detailsData);
-        await this.transactionModel.update({ status: "Validated" }, { where: { sender_uuid: data.paymentCode, payment_method_uuid: data.payment_method_uuid } });
+        let detailsResponse = await this.transactionDetailsService.create(detailsData);
+        await this.transactionModel.update({ status: "Validated", payment_method_uuid: data.payment_method_uuid }, { where: { sender_uuid: (_a = data.paymentCode) !== null && _a !== void 0 ? _a : data.sender_uuid, } });
         paymentData.status = "Validated";
         let sender = { name: "Client", countryCode: "00243", phone: "000 000 000", email: "client@dailypaysarl.com" };
         let receiver = await this.mailService.getUserData(paymentData.receiver_uuid);
         if (receiver.email && sender.email) {
-            this.mailService.sendPaymentMail(sender, receiver, paymentData, uuidGenerator_helper_1.UuidGenerator.getDisplayDate());
+            this.mailService.sendPaymentMail(sender, receiver, data, uuidGenerator_helper_1.UuidGenerator.getDisplayDate());
         }
-        return paymentData;
+        return { transaction: paymentData, details: detailsResponse, message: "Data saved successfuly" };
     }
     async cancel(uuid) {
         let transData = await this.transactionModel.findAll({ where: { uuid: uuid }, raw: true });

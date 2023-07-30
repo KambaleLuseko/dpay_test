@@ -51,7 +51,11 @@ export declare class TransactionsController {
         transaction: import("./transactions.model").Transactions;
         message: string;
     }>;
-    validateMerchantPayment(data: any): Promise<import("./transactions.model").Transactions>;
+    validateMerchantPayment(data: any): Promise<{
+        transaction: import("./transactions.model").Transactions;
+        details: import("../transaction-details/transaction-details.model").TransactionDetails;
+        message: string;
+    }>;
     cancel(params: any): Promise<{
         details: import("../transaction-details/transaction-details.model").TransactionDetails;
         message: string;

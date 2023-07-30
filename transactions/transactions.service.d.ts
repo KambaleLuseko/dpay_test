@@ -60,7 +60,11 @@ export declare class TransactionsService {
         transaction: Transactions;
         message: string;
     }>;
-    ValidateExternalPayment(data: any): Promise<Transactions>;
+    ValidateExternalPayment(data: any): Promise<{
+        transaction: Transactions;
+        details: import("../transaction-details/transaction-details.model").TransactionDetails;
+        message: string;
+    }>;
     cancel(uuid: any): Promise<{
         details: import("../transaction-details/transaction-details.model").TransactionDetails;
         message: string;
