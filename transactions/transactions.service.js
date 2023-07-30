@@ -219,7 +219,7 @@ let TransactionsService = class TransactionsService {
         return { transaction: transactResponse, message: "Data saved successfuly" };
     }
     async ValidateExternalPayment(data) {
-        var _a;
+        var _a, _b;
         if (!data.amount || !data.currency || !data.payment_method_uuid) {
             throw new common_1.HttpException('Invalid data submitted', common_1.HttpStatus.FORBIDDEN);
         }
@@ -244,6 +244,7 @@ let TransactionsService = class TransactionsService {
         }
         let externalApiResponse = await this.processExternalMerchantPayment(paymentData.confirmation_url, paymentData.data_model, paymentData.confirmation_method);
         if (externalApiResponse.status != 200) {
+            await this.transactionModel.update({ status: "Refund", }, { where: { sender_uuid: (_a = data.paymentCode) !== null && _a !== void 0 ? _a : data.sender_uuid, } });
             throw new common_1.HttpException('The merchant system cannot process the request', common_1.HttpStatus.FORBIDDEN);
         }
         const detailsData = {
@@ -256,7 +257,7 @@ let TransactionsService = class TransactionsService {
             type: 'Validation',
         };
         let detailsResponse = await this.transactionDetailsService.create(detailsData);
-        await this.transactionModel.update({ status: "Validated", payment_method_uuid: data.payment_method_uuid }, { where: { sender_uuid: (_a = data.paymentCode) !== null && _a !== void 0 ? _a : data.sender_uuid, } });
+        await this.transactionModel.update({ status: "Refund", payment_method_uuid: data.payment_method_uuid }, { where: { sender_uuid: (_b = data.paymentCode) !== null && _b !== void 0 ? _b : data.sender_uuid, } });
         paymentData.status = "Validated";
         let sender = { name: "Client", countryCode: "00243", phone: "000 000 000", email: "client@dailypaysarl.com" };
         let receiver = await this.mailService.getUserData(paymentData.receiver_uuid);
@@ -333,6 +334,7 @@ let TransactionsService = class TransactionsService {
                 url: url,
                 data: JSON.stringify(dataModel),
             });
+            console.log(res.data);
             return { status: res.status, data: res.data, message: "Success" };
         }
         catch (error) {
