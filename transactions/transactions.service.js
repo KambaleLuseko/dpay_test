@@ -331,7 +331,7 @@ let TransactionsService = class TransactionsService {
             let dataObject = {};
             for (let index = 0; index < modelKeys.length; index++) {
                 console.log(modelValues[index]);
-                dataObject[`${modelKeys[index]}`] = modelValues[index];
+                dataObject[`${modelKeys[index]}`] = `${modelValues[index]}`;
             }
             console.log((dataObject));
             console.log(url);
@@ -340,7 +340,7 @@ let TransactionsService = class TransactionsService {
                 method: (_a = method.toUpperCase()) !== null && _a !== void 0 ? _a : "POST",
                 url: url,
                 data: (dataObject),
-                headers: { 'Content-Type': 'application/json', 'Accept': '*/*' }
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Accept': '*/*' }
             });
             console.log(res.data);
             return { status: res.status, data: res.data, message: "Success" };
