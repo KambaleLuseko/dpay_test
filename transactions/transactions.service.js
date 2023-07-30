@@ -332,7 +332,7 @@ let TransactionsService = class TransactionsService {
             const res = await (0, axios_1.default)({
                 method: (_a = method.toUpperCase()) !== null && _a !== void 0 ? _a : "POST",
                 url: url,
-                data: JSON.stringify(dataModel),
+                data: (dataModel),
             });
             console.log(res.data);
             return { status: res.status, data: res.data, message: "Success" };
