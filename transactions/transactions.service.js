@@ -326,13 +326,20 @@ let TransactionsService = class TransactionsService {
         var _a, _b;
         try {
             let dataModel = JSON.parse(data.replace("\\", ''));
-            console.log(JSON.stringify(dataModel));
+            let modelKeys = Object.keys(dataModel);
+            let modelValues = Object.values(dataModel);
+            let dataObject = {};
+            for (let index = 0; index < modelKeys.length; index++) {
+                console.log(modelValues[index]);
+                dataObject[`${modelKeys[index]}`] = data[`${modelValues[index]}`];
+            }
+            console.log((dataObject));
             console.log(url);
             console.log(method);
             const res = await (0, axios_1.default)({
                 method: (_a = method.toUpperCase()) !== null && _a !== void 0 ? _a : "POST",
                 url: url,
-                data: (dataModel),
+                data: (dataObject),
             });
             console.log(res.data);
             return { status: res.status, data: res.data, message: "Success" };
