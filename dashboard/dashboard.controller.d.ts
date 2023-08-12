@@ -5,8 +5,6 @@ export declare class DashboardController {
     getData(data: any): Promise<{
         transaction: object;
         bill: object;
-        weekStats: {
-            weekStats: any[];
-        };
+        weekStats: any[];
     }>;
 }

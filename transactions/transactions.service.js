@@ -72,7 +72,7 @@ let TransactionsService = class TransactionsService {
             groupData.push({ "date": d.toISOString().substring(0, 10), payments: weekTransactions.filter((item) => item.date.substring(0, 10) == d.toISOString().substring(0, 10)).map((item) => !parseFloat(item.totalPayment) ? 0 : parseFloat(item.totalPayment)).reduce((prev, next) => { return prev + next; }, 0), bills: weekBills.filter((item) => item.date.substring(0, 10) == d.toISOString().substring(0, 10)).map((item) => !parseFloat(item.totalBills) ? 0 : parseFloat(item.totalBills)).reduce((prev, next) => { return prev + next; }, 0) });
             return d.toISOString().substring(0, 10);
         });
-        return { weekStats: groupData };
+        return groupData;
     }
     async findOne(value) {
         var _a, _b;

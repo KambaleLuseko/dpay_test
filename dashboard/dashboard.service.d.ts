@@ -7,8 +7,6 @@ export declare class DashboardService {
     getAllStats(data: any): Promise<{
         transaction: object;
         bill: object;
-        weekStats: {
-            weekStats: any[];
-        };
+        weekStats: any[];
     }>;
 }
