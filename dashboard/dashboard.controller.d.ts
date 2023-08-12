@@ -4,7 +4,7 @@ export declare class DashboardController {
     constructor(dashboardService: DashboardService);
     getData(data: any): Promise<{
         transaction: object;
-        bill: {};
+        bill: object;
         weekStats: {
             weekStats: any[];
         };

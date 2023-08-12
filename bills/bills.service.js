@@ -132,7 +132,7 @@ let BillsService = class BillsService {
         let countTotal = `SELECT COUNT(*) FROM Bills WHERE (sender_uuid=${data.userUUID} OR client_uuid=${data.userUUID})`;
         let query = `SELECT (${countSentPending}) AS sentPending, (${countReceivedPending}) as receivedPending, (${countValidated}) as countValidated,(${countRefund}) AS countRefund,(${countCanceled}) as countCanceled, (${countTotal}) as total`;
         let bills = await this.billsModel.sequelize.query(query, { type: sequelize_1.QueryTypes.SELECT });
-        return bills;
+        return bills[0];
     }
     async findOne(value, details = true) {
         var _a;

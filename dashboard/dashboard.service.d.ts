@@ -6,7 +6,7 @@ export declare class DashboardService {
     constructor(transServcie: TransactionsService, billService: BillsService);
     getAllStats(data: any): Promise<{
         transaction: object;
-        bill: {};
+        bill: object;
         weekStats: {
             weekStats: any[];
         };
