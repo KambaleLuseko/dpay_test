@@ -28,6 +28,7 @@ const websockets_module_1 = require("./websockets/websockets.module");
 const activities_module_1 = require("./activities/activities.module");
 const activity_services_module_1 = require("./activity_services/activity_services.module");
 const verification_code_module_1 = require("./verification_code/verification_code.module");
+const dashboard_module_1 = require("./dashboard/dashboard.module");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -39,7 +40,7 @@ AppModule = __decorate([
             wallet_module_1.WalletModule, mail_module_1.MailModule, currency_module_1.CurrencyModule, rate_module_1.RateModule,
             gateways_module_1.GatewaysModule, account_module_1.AccountModule, account_details_module_1.AccountDetailsModule,
             transactions_module_1.TransactionsModule, payment_methods_module_1.PaymentMethodsModule, transaction_details_module_1.TransactionDetailsModule,
-            bills_module_1.BillsModule, bill_details_module_1.BillDetailsModule, notifications_module_1.NotificationsModule, websockets_module_1.WebsocketsModule, activities_module_1.ActivitiesModule, activity_services_module_1.ActivityServicesModule, verification_code_module_1.VerificationCodeModule,
+            bills_module_1.BillsModule, bill_details_module_1.BillDetailsModule, notifications_module_1.NotificationsModule, websockets_module_1.WebsocketsModule, activities_module_1.ActivitiesModule, activity_services_module_1.ActivityServicesModule, verification_code_module_1.VerificationCodeModule, dashboard_module_1.DashboardModule,
         ],
         providers: [],
     })

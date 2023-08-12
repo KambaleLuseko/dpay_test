@@ -48,6 +48,32 @@ let TransactionsService = class TransactionsService {
         }
         return result;
     }
+    async getStats(data) {
+        if (!data.userUUID) {
+            throw new common_1.HttpException('You must provide the userUUID to filter data', common_1.HttpStatus.FORBIDDEN);
+        }
+        let countSentPending = `SELECT COUNT(*) FROM Transactions WHERE (sender_uuid=${data.userUUID}) AND status='pending'`;
+        let countReceivedPending = `SELECT COUNT(*) FROM Transactions WHERE (receiver_uuid=${data.userUUID}) AND status='pending'`;
+        let countValidated = `SELECT COUNT(*) FROM Transactions WHERE (sender_uuid=${data.userUUID} OR receiver_uuid=${data.userUUID}) AND status='validated'`;
+        let countRefund = `SELECT COUNT(*) FROM Transactions WHERE (sender_uuid=${data.userUUID} OR receiver_uuid=${data.userUUID}) AND status='refund'`;
+        let countCanceled = `SELECT COUNT(*) FROM Transactions WHERE (sender_uuid=${data.userUUID} OR receiver_uuid=${data.userUUID}) AND status='canceled'`;
+        let countTotal = `SELECT COUNT(*) FROM Transactions WHERE (sender_uuid=${data.userUUID} OR receiver_uuid=${data.userUUID})`;
+        let query = `SELECT (${countSentPending}) AS sentPending, (${countReceivedPending}) as receivedPending, (${countValidated}) as countValidated,(${countRefund}) AS countRefund,(${countCanceled}) as countCanceled, (${countTotal}) as total`;
+        let transactions = await this.transactionModel.sequelize.query(query, { type: sequelize_1.QueryTypes.SELECT });
+        return transactions[0];
+    }
+    async weekStats(data) {
+        let weekTransactions = await this.transactionModel.sequelize.query(`SELECT SUBSTR(Transactions.createdAt, 1,10) date, Transactions.amount totalPayment FROM Transactions WHERE createdAt BETWEEN DATE_SUB(NOW(), INTERVAL 7 DAY) AND NOW() AND (sender_uuid='${data.userUUID}' OR receiver_uuid='${data.userUUID}')`, { type: sequelize_1.QueryTypes.SELECT, raw: true, nest: true });
+        let weekBills = await this.transactionModel.sequelize.query(`SELECT SUBSTR(Bills.createdAt, 1,10) date, Bills.amount_due totalBills FROM Bills WHERE createdAt BETWEEN DATE_SUB(NOW(), INTERVAL 7 DAY) AND NOW() AND (sender_uuid='${data.userUUID}' OR client_uuid='${data.userUUID}')`, { type: sequelize_1.QueryTypes.SELECT, raw: true, nest: true });
+        let groupData = [];
+        const dates = [...Array(7)].map((_, i) => {
+            const d = new Date();
+            d.setDate(d.getDate() - i);
+            groupData.push({ "date": d.toISOString().substring(0, 10), payments: weekTransactions.filter((item) => item.date.substring(0, 10) == d.toISOString().substring(0, 10)).map((item) => !parseFloat(item.totalPayment) ? 0 : parseFloat(item.totalPayment)).reduce((prev, next) => { return prev + next; }, 0), bills: weekBills.filter((item) => item.date.substring(0, 10) == d.toISOString().substring(0, 10)).map((item) => !parseFloat(item.totalBills) ? 0 : parseFloat(item.totalBills)).reduce((prev, next) => { return prev + next; }, 0) });
+            return d.toISOString().substring(0, 10);
+        });
+        return { weekStats: groupData };
+    }
     async findOne(value) {
         var _a, _b;
         let condition;
@@ -330,19 +356,14 @@ let TransactionsService = class TransactionsService {
             let modelValues = Object.values(dataModel);
             let dataObject = {};
             for (let index = 0; index < modelKeys.length; index++) {
-                console.log(modelValues[index]);
                 dataObject[`${modelKeys[index]}`] = `${modelValues[index]}`;
             }
-            console.log((dataObject));
-            console.log(url);
-            console.log(method);
             const res = await (0, axios_1.default)({
                 method: (_a = method.toUpperCase()) !== null && _a !== void 0 ? _a : "POST",
                 url: url,
                 data: (dataObject),
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Accept': '*/*' }
             });
-            console.log(res.data);
             return { status: res.status, data: res.data, message: "Success" };
         }
         catch (error) {

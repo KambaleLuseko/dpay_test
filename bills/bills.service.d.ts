@@ -20,6 +20,7 @@ export declare class BillsService {
     cancel(uuid: any): Promise<[affectedCount: number]>;
     validate(uuid: any): Promise<[affectedCount: number]>;
     findAll(value: any): Promise<any[]>;
+    getStats(data: any): Promise<object[]>;
     findOne(value: string, details?: boolean): Promise<{
         sender: any;
         receiver: any;

@@ -15,6 +15,10 @@ export declare class TransactionsService {
     private mailService;
     constructor(transactionModel: typeof Transactions, paymentMethodService: PaymentMethodsService, transactionDetailsService: TransactionDetailsService, userService: UserService, billService: BillsService, notifService: NotificationsService, mailService: MailService);
     findAll(value?: string): Promise<any[]>;
+    getStats(data: any): Promise<object>;
+    weekStats(data: any): Promise<{
+        weekStats: any[];
+    }>;
     findOne(value: string): Promise<any[] | {
         sender: any;
         receiver: any;

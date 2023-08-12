@@ -120,6 +120,20 @@ let BillsService = class BillsService {
         }
         return result;
     }
+    async getStats(data) {
+        if (!data.userUUID) {
+            throw new common_1.HttpException('You must provide the userUUID to filter data', common_1.HttpStatus.FORBIDDEN);
+        }
+        let countSentPending = `SELECT COUNT(*) FROM Bills WHERE (sender_uuid=${data.userUUID}) AND status='pending'`;
+        let countReceivedPending = `SELECT COUNT(*) FROM Bills WHERE (client_uuid=${data.userUUID}) AND status='pending'`;
+        let countValidated = `SELECT COUNT(*) FROM Bills WHERE (sender_uuid=${data.userUUID} OR client_uuid=${data.userUUID}) AND status='closed'`;
+        let countRefund = `SELECT COUNT(*) FROM Bills WHERE (sender_uuid=${data.userUUID} OR client_uuid=${data.userUUID}) AND status='refund'`;
+        let countCanceled = `SELECT COUNT(*) FROM Bills WHERE (sender_uuid=${data.userUUID} OR client_uuid=${data.userUUID}) AND status='canceled'`;
+        let countTotal = `SELECT COUNT(*) FROM Bills WHERE (sender_uuid=${data.userUUID} OR client_uuid=${data.userUUID})`;
+        let query = `SELECT (${countSentPending}) AS sentPending, (${countReceivedPending}) as receivedPending, (${countValidated}) as countValidated,(${countRefund}) AS countRefund,(${countCanceled}) as countCanceled, (${countTotal}) as total`;
+        let bills = await this.billsModel.sequelize.query(query, { type: sequelize_1.QueryTypes.SELECT });
+        return bills;
+    }
     async findOne(value, details = true) {
         var _a;
         let condition;
