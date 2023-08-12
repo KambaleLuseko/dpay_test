@@ -52,12 +52,12 @@ let TransactionsService = class TransactionsService {
         if (!data.userUUID) {
             throw new common_1.HttpException('You must provide the userUUID to filter data', common_1.HttpStatus.FORBIDDEN);
         }
-        let countSentPending = `SELECT COUNT(*) FROM Transactions WHERE (sender_uuid=${data.userUUID}) AND status='pending'`;
-        let countReceivedPending = `SELECT COUNT(*) FROM Transactions WHERE (receiver_uuid=${data.userUUID}) AND status='pending'`;
-        let countValidated = `SELECT COUNT(*) FROM Transactions WHERE (sender_uuid=${data.userUUID} OR receiver_uuid=${data.userUUID}) AND status='validated'`;
-        let countRefund = `SELECT COUNT(*) FROM Transactions WHERE (sender_uuid=${data.userUUID} OR receiver_uuid=${data.userUUID}) AND status='refund'`;
-        let countCanceled = `SELECT COUNT(*) FROM Transactions WHERE (sender_uuid=${data.userUUID} OR receiver_uuid=${data.userUUID}) AND status='canceled'`;
-        let countTotal = `SELECT COUNT(*) FROM Transactions WHERE (sender_uuid=${data.userUUID} OR receiver_uuid=${data.userUUID})`;
+        let countSentPending = `SELECT COUNT(*) FROM Transactions WHERE (sender_uuid='${data.userUUID}') AND status='pending'`;
+        let countReceivedPending = `SELECT COUNT(*) FROM Transactions WHERE (receiver_uuid='${data.userUUID}') AND status='pending'`;
+        let countValidated = `SELECT COUNT(*) FROM Transactions WHERE (sender_uuid='${data.userUUID}' OR receiver_uuid='${data.userUUID}') AND status='validated'`;
+        let countRefund = `SELECT COUNT(*) FROM Transactions WHERE (sender_uuid='${data.userUUID}' OR receiver_uuid='${data.userUUID}') AND status='refund'`;
+        let countCanceled = `SELECT COUNT(*) FROM Transactions WHERE (sender_uuid='${data.userUUID}' OR receiver_uuid='${data.userUUID}') AND status='canceled'`;
+        let countTotal = `SELECT COUNT(*) FROM Transactions WHERE (sender_uuid='${data.userUUID}' OR receiver_uuid='${data.userUUID}')`;
         let query = `SELECT (${countSentPending}) AS sentPending, (${countReceivedPending}) as receivedPending, (${countValidated}) as countValidated,(${countRefund}) AS countRefund,(${countCanceled}) as countCanceled, (${countTotal}) as total`;
         let transactions = await this.transactionModel.sequelize.query(query, { type: sequelize_1.QueryTypes.SELECT });
         return transactions[0];
