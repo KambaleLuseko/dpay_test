@@ -18,4 +18,7 @@ export declare class Transactions extends Model<Transactions> {
     confirmation_url: string;
     confirmation_method: string;
     merchant_key: string;
+    auth_type: string;
+    auth_prefix: string;
+    auth_token: string;
 }

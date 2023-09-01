@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AccountDetails = void 0;
 const sequelize_typescript_1 = require("sequelize-typescript");
+const uuidGenerator_helper_1 = require("../helpers/uuidGenerator.helper");
 let AccountDetails = class AccountDetails extends sequelize_typescript_1.Model {
 };
 __decorate([
@@ -64,6 +65,21 @@ __decorate([
     }),
     __metadata("design:type", String)
 ], AccountDetails.prototype, "storeKey", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.STRING,
+        allowNull: false,
+        defaultValue: uuidGenerator_helper_1.UuidGenerator.getDate()
+    }),
+    __metadata("design:type", String)
+], AccountDetails.prototype, "start_date", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.STRING,
+        allowNull: false,
+    }),
+    __metadata("design:type", String)
+], AccountDetails.prototype, "end_date", void 0);
 AccountDetails = __decorate([
     sequelize_typescript_1.Table
 ], AccountDetails);

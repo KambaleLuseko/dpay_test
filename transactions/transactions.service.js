@@ -165,7 +165,7 @@ let TransactionsService = class TransactionsService {
                 throw new common_1.HttpException('The provided amount cannot be added to this bill because is great than the remaining amount', common_1.HttpStatus.FORBIDDEN);
             }
             if (billData.data_model && billData.confirmation_method && billData.confirmation_url) {
-                let externalApiResponse = await this.processExternalMerchantPayment(billData.confirmation_url, billData.data_model, billData.confirmation_method);
+                let externalApiResponse = await this.processExternalMerchantPayment(billData.confirmation_url, billData.data_model, billData.confirmation_method, {});
                 if (externalApiResponse.status != 200) {
                     throw new common_1.HttpException('The merchant system cannot complete the request', common_1.HttpStatus.FORBIDDEN);
                 }
@@ -201,7 +201,7 @@ let TransactionsService = class TransactionsService {
         return { transaction: transactResponse, details: transactDetailsResponse, message: "Data saved successfuly" };
     }
     async externalSystemPayment(data, key) {
-        var _a;
+        var _a, _b, _c, _d;
         if (!data.merchant_id || !data.amount || !data.currency) {
             throw new common_1.HttpException('Invalid data submitted', common_1.HttpStatus.FORBIDDEN);
         }
@@ -233,6 +233,9 @@ let TransactionsService = class TransactionsService {
             confirmation_url: data.confirmation_url,
             confirmation_method: data.confirmation_method,
             merchant_key: key,
+            auth_type: (_b = data.auth_type) !== null && _b !== void 0 ? _b : 'Bearer',
+            auth_prefix: (_c = data.auth_prefix) !== null && _c !== void 0 ? _c : "Authorization",
+            auth_token: (_d = data.auth_token) !== null && _d !== void 0 ? _d : null,
         };
         let transactResponse = await this.transactionModel.create(transData);
         let receiver = { name: data.notificationValue, countryCode: "00243", phone: "000 000 000", email: data.notificationValue };
@@ -268,7 +271,7 @@ let TransactionsService = class TransactionsService {
         if (!paymentData.data_model || !paymentData.confirmation_method || !paymentData.confirmation_url) {
             throw new common_1.HttpException("We haven't found merchant confirmation data on this transaction for validation", common_1.HttpStatus.NOT_FOUND);
         }
-        let externalApiResponse = await this.processExternalMerchantPayment(paymentData.confirmation_url, paymentData.data_model, paymentData.confirmation_method);
+        let externalApiResponse = await this.processExternalMerchantPayment(paymentData.confirmation_url, paymentData.data_model, paymentData.confirmation_method, paymentData);
         if (externalApiResponse.status != 200) {
             await this.transactionModel.update({ status: "Refund", }, { where: { sender_uuid: (_a = data.paymentCode) !== null && _a !== void 0 ? _a : data.sender_uuid, } });
             throw new common_1.HttpException('The merchant system cannot process the request', common_1.HttpStatus.FORBIDDEN);
@@ -348,7 +351,7 @@ let TransactionsService = class TransactionsService {
             "grant_type": "client_credentials"
         }, { 'Content-Type': 'application/json', 'Accept': '*/*' }, "https://openapi.airtel.africa/auth/oauth2/token");
     }
-    async processExternalMerchantPayment(url, data, method) {
+    async processExternalMerchantPayment(url, data, method, rawData) {
         var _a, _b;
         try {
             let dataModel = JSON.parse(data.replace("\\", ''));
@@ -358,11 +361,16 @@ let TransactionsService = class TransactionsService {
             for (let index = 0; index < modelKeys.length; index++) {
                 dataObject[`${modelKeys[index]}`] = `${modelValues[index]}`;
             }
+            let headersData = { 'Content-Type': 'application/x-www-form-urlencoded', 'Accept': '*/*' };
+            if (rawData.auth_prefix && rawData.auth_type && rawData.auth_token) {
+                headersData[`${rawData.auth_prefix}`] = `${rawData.auth_type} ${rawData.auth_token}`;
+            }
+            console.log(headersData);
             const res = await (0, axios_1.default)({
                 method: (_a = method.toUpperCase()) !== null && _a !== void 0 ? _a : "POST",
                 url: url,
                 data: (dataObject),
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Accept': '*/*' }
+                headers: headersData
             });
             return { status: res.status, data: res.data, message: "Success" };
         }

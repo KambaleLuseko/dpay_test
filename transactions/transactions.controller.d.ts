@@ -29,6 +29,9 @@ export declare class TransactionsController {
             confirmation_url: string;
             confirmation_method: string;
             merchant_key: string;
+            auth_type: string;
+            auth_prefix: string;
+            auth_token: string;
             id?: any;
             createdAt?: any;
             updatedAt?: any;

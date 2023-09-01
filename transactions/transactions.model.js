@@ -144,6 +144,29 @@ __decorate([
     }),
     __metadata("design:type", String)
 ], Transactions.prototype, "merchant_key", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.STRING,
+        allowNull: true,
+        defaultValue: "Bearer"
+    }),
+    __metadata("design:type", String)
+], Transactions.prototype, "auth_type", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.STRING,
+        allowNull: true,
+        defaultValue: 'Authorization'
+    }),
+    __metadata("design:type", String)
+], Transactions.prototype, "auth_prefix", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)({
+        type: sequelize_typescript_1.DataType.TEXT,
+        allowNull: true,
+    }),
+    __metadata("design:type", String)
+], Transactions.prototype, "auth_token", void 0);
 Transactions = __decorate([
     sequelize_typescript_1.Table
 ], Transactions);

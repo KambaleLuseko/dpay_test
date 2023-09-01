@@ -7,4 +7,6 @@ export declare class AccountDetails extends Model<AccountDetails> {
     sold: string;
     key: string;
     storeKey: string;
+    start_date: string;
+    end_date: string;
 }

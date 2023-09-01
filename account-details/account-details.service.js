@@ -30,6 +30,7 @@ let AccountDetailsService = class AccountDetailsService {
         return data;
     }
     async create(data) {
+        var _a;
         if (!data.account_uuid || !data.mode) {
             throw new common_1.HttpException('Invalid Data submitted', common_1.HttpStatus.BAD_REQUEST);
         }
@@ -39,6 +40,8 @@ let AccountDetailsService = class AccountDetailsService {
             mode: data.mode,
             key: `${data.mode.toString().toLowerCase()}_key_${Buffer.from(await jwt_helper_1.JWTHelper.generateToken({ phone: data.phone, type: `${data.mode.toString().toLowerCase()}Key`, expiration: null })).toString('hex')}`,
             storeKey: `${data.mode.toString().toLowerCase()}_storeKey_${Buffer.from(await jwt_helper_1.JWTHelper.generateToken({ phone: data.phone, type: `${data.mode.toString().toLowerCase()}StoreKey`, expiration: null })).toString('hex')}`,
+            start_date: (_a = data.start_date) !== null && _a !== void 0 ? _a : uuidGenerator_helper_1.UuidGenerator.getDate(),
+            end_date: data.end_date,
         };
         return await this.accountDetailsModel.create(accountDetails);
     }
@@ -56,6 +59,8 @@ let AccountDetailsService = class AccountDetailsService {
                 mode: data[index].mode,
                 key: `${data[index].mode.toString().toLowerCase()}_key_${Buffer.from(await jwt_helper_1.JWTHelper.generateToken({ phone: data[index].phone, type: `${data[index].mode.toString().toLowerCase()}Key`, expiration: null })).toString('hex')}`,
                 storeKey: `${data[index].mode.toString().toLowerCase()}_storeKey_${Buffer.from(await jwt_helper_1.JWTHelper.generateToken({ phone: data[index].phone, type: `${data[index].mode.toString().toLowerCase()}StoreKey`, expiration: null })).toString('hex')}`,
+                start_date: data[index].start_date,
+                end_date: data[index].end_date,
             });
         }
         return await this.accountDetailsModel.bulkCreate(dataToSave);

@@ -21,14 +21,15 @@ let AuthKeyMiddleware = class AuthKeyMiddleware {
         this.userService = userService;
     }
     async use(req, res, next) {
-        if (!req.headers.api_key) {
-            throw new common_1.HttpException('You must provide an API KEY to use this service', common_1.HttpStatus.UNAUTHORIZED);
+        console.log(req.body.merchant_id);
+        if (!req.headers.api_key || !req.body.merchant_id) {
+            throw new common_1.HttpException('You must provide an API KEY and MerchantID to use this service', common_1.HttpStatus.UNAUTHORIZED);
         }
         const accountDetails = await this.accountDetailsService.findAll(req.headers.api_key);
         if (accountDetails.length != 1) {
             throw new common_1.HttpException('Unable to authenticate the provided key', common_1.HttpStatus.UNAUTHORIZED);
         }
-        const account = await this.accountService.findAll(accountDetails[0].account_uuid);
+        const account = await this.accountService.findAll(req.body.merchant_id);
         if (!account) {
             throw new common_1.HttpException('Unable to find a developer account with the provided key', common_1.HttpStatus.UNAUTHORIZED);
         }

@@ -52,6 +52,8 @@ let AccountService = class AccountService {
             city: data.city,
             postalCode: data.postalCode,
         };
+        var date = new Date();
+        date.setDate(date.getDate() + 30);
         let accountDetails = [
             {
                 account_uuid: uuid,
@@ -59,6 +61,8 @@ let AccountService = class AccountService {
                 mode: 'Test',
                 key: `test_key_${Buffer.from(await jwt_helper_1.JWTHelper.generateToken({ phone: data.phone, type: 'TestKey', expiration: null })).toString('hex')}`,
                 storeKey: `test_storeKey_${Buffer.from(await jwt_helper_1.JWTHelper.generateToken({ phone: data.phone, type: 'TestStoreKey', expiration: null })).toString('hex')}`,
+                start_date: uuidGenerator_helper_1.UuidGenerator.getDate(),
+                end_date: date.toString()
             },
             {
                 account_uuid: uuid,
@@ -66,6 +70,8 @@ let AccountService = class AccountService {
                 mode: 'Live',
                 key: `like_key_${Buffer.from(await jwt_helper_1.JWTHelper.generateToken({ phone: data.phone, type: 'LiveKey', expiration: null })).toString('hex')}`,
                 storeKey: `live_storeKey_${Buffer.from(await jwt_helper_1.JWTHelper.generateToken({ phone: data.phone, type: 'LiveStoreKey', expiration: null })).toString('hex')}`,
+                start_date: uuidGenerator_helper_1.UuidGenerator.getDate(),
+                end_date: uuidGenerator_helper_1.UuidGenerator.getDate(),
             }
         ];
         let savedAccount = await this.accountModel.create(account);

@@ -40,6 +40,9 @@ export declare class TransactionsService {
         confirmation_url: string;
         confirmation_method: string;
         merchant_key: string;
+        auth_type: string;
+        auth_prefix: string;
+        auth_token: string;
         id?: any;
         createdAt?: any;
         updatedAt?: any;
@@ -77,7 +80,7 @@ export declare class TransactionsService {
     }>;
     callExternalApi(body: any, headers: any, url: string): Promise<void>;
     testEAirtelMoney(): Promise<void>;
-    processExternalMerchantPayment(url: string, data: string, method: string): Promise<{
+    processExternalMerchantPayment(url: string, data: string, method: string, rawData: any): Promise<{
         status: any;
         data: any;
         message: any;
